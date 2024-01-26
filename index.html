@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    
+
+    <title>Find Vaccince Centers</title>
+</head>
+<body>
+    <div class="header" align="center">
+        <h1>Get <span class="cl1"> VACCINATION CENTER </span> details around your Area</h1>
+    </div>
+    <div class="imgdis">
+        <img src="https://irp.cdn-website.com/06d03ad6/dms3rep/multi/shutterstock_1894336930-3817713b.jpg" alt="Get Vaccination Center Details">
+    </div>
+    <div class="Search" align="center">
+        <div class="inputbox">
+            <input type="number" name="pincode" id="pin" placeholder="Enter Your Pincode Here">
+        </div>
+        <div class="btn" align="center">
+            <button class="submitbtn">
+                SUBMIT
+                
+            </button>
+        </div>
+    </div>
+    <div class="CenterDetails" align="center">
+        <h1>CENTER DETAILS</h1>
+    </div>
+    
+        
+        
+    <script>
+        let center=[];
+        const CenterDetails=document.querySelector(".CenterDetails");
+        const btn = document.querySelector(".submitbtn");
+
+        let today,d,m,y;
+        today=new Date();
+        d=today.getDate();
+        m=today.getMonth()+1;
+        y=today.getFullYear();
+        today = `${d}-${m}-${y}`;
+
+        function centerdata(pincode)
+        {
+            let url= `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode=${pincode} & date=${today}`;
+           
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.onload = function () {
+                if (this.status === 200) {
+                    let data = JSON.parse(this.responseText);
+                    if(data.sessions != []){
+                        data.sessions.map((e, i) => {
+                            let centerInfo = [
+                                e.name,
+                                e.address,
+                                e.block_name,
+                                e.district_name,
+                                e.state_name,
+                                e.pincode,
+                                e.date,
+                                e.vaccine,
+                                e.min_age_limit,
+                                e.available_capacity,
+                                e.available_capacity_dose1,
+                                e.available_capacity_dose2,
+                                e.slots,
+                            ];
+                        center.push(centerInfo);
+                    let code = `
+                    <div class="card">
+                        <h1>
+                            <span class="category">Center Name - </span>
+                            ${center[i][0]}
+                            <hr>
+                        </h1>
+                        <div class="innercard">
+                            <h3>
+                                <span class="category">Center Address - </span>
+                                ${center[i][1]}
+                            </h3>
+                            <h3>
+                                <span class="category">Block Name - </span>
+                                ${center[i][2]}
+                            </h3>
+                            <h3>
+                                <span class="category">District Name - </span>
+                                ${center[i][3]}
+                            </h3>
+                            <h3>
+                                <span class="category">State Name - </span>
+                                ${center[i][4]}
+                            </h3>
+                            <h3>
+                                <span class="category">Pin Code - </span>
+                                ${center[i][5]}
+                            </h3>
+                            <h3>
+                                <span class="category">Date - </span>
+                                ${center[i][6]}
+                            </h3>
+                            <h3>
+                                <span class="category">Vaccine - </span>
+                                ${center[i][7]}
+                            </h3>
+                            <h3>
+                                <span class="category">Minimum Age Limit - </span>
+                                ${center[i][8]}
+                            </h3>
+                            <h3>
+                                <span class="category">Available Capacity - </span>
+                                ${center[i][9]}
+                            </h3>
+                            <h3>
+                                <span class="category">Available Dose 1 Capacity - </span>
+                                ${center[i][10]}
+                            </h3>
+                            <h3>
+                                <span class="category">Available Dose 2 Capacity - </span>
+                                ${center[i][11]}
+                            </h3>
+                            <h3>
+                                <span class="category">Slots - </span>
+                                ${center[i][12].join(" | ")}
+                            </h3>
+                        </div>
+                    </div>`;
+                    CenterDetails.innerHTML += code;
+                });
+                if(data.sessions.length===0){
+                    alert("No Vaccinations Available");
+                }
+                center=[]
+                }
+                } else{
+                alert("Enter Valid pin Code")
+                }
+                };
+                xhr.send();
+            }
+            btn.addEventListener("click",() => {
+                let pincode = pin.value;
+                CenterDetails.innerHTML = "";
+                if (pincode === "") {
+                    alert("Enter pincode in the search box")
+                } else if (pincode !== "") {
+                    centerdata(pincode)
+                }
+                })     
+    </script>
+    
+</body>
+</html>
